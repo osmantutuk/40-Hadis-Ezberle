@@ -1,0 +1,707 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>40 Hadis</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+body {
+	font-family: Arial, sans-serif;
+}
+#loopDuration {
+	display: none;
+}
+.controls {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	background-color: #f8f8f8;
+	padding: 10px;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+	z-index: 1000;
+	text-align: center;
+	 margin-left: -8px;
+}
+	select#loopSelect {
+    padding: 5px;
+    background: #fff;
+    color: #8a8a8a;
+    outline: none;
+}
+.player, #loopDuration {
+	margin-bottom: 5px;
+	border: 1px solid #eee;
+	padding: 7px;
+}
+.button {
+	margin: 5px;
+	cursor: pointer;
+	border: none;
+	background: none;
+	font-size: 1.2em;
+	user-select: none; /* Metin seçimini engeller */
+}
+.button i {
+	margin-right: 5px;
+}
+	
+	.controls button:nth-child(5), .controls button:nth-child(6) {
+    font-weight: bold;
+}
+.controls button {
+    margin: 4px 1px;
+    padding: 16px 1px;
+    font-size: 12px;
+    width: 104px;
+    border: none;
+    background: #e8e8e8;
+}
+.hadis-container {
+	margin-top: 60px; /* To make space for the controls */
+	padding: 60px;
+}
+.hadis {
+	display: none;
+}
+.hadis.active {
+	display: block;
+}
+.hadis p {
+	margin: 10px 0;
+}
+.arabic {
+	font-family: inherit;
+	font-size: 88px;
+	direction: rtl;
+	text-align: right;
+}
+.hadis-container {
+	margin-top: 60px;
+	text-align: center;
+	height: 71vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+@media screen and (max-width: 768px) {
+.hadis-container {
+    margin-top: 153px !important;
+    padding: 10px !important;
+    font-size: 11px;
+    justify-content: flex-start;
+}
+.arabic {
+	font-size: 47px;
+}
+.controls {
+    width: inherit !important;
+    padding: 5px;
+    padding-top: 47px;
+}
+
+.controls button {
+	margin: 4px 1px;
+	padding: 6px 1px;
+	font-size: 10px;
+	width: 104px;
+}
+}
+	
+	body {
+  background-color: #fff; /* Karanlık tema arka plan rengi */
+}
+	
+
+	body p, body h2 {
+    color: #605d5d;
+}
+	body .player, body #loopDuration {
+    border: 1px solid #605d5d;
+}
+	body .button, body label {
+    color: #605d5d;
+}
+body select#loopSelect {
+    background: #fff;
+    color: #605d5d;
+}
+	
+	
+body.dark-theme {
+  background-color: #333; /* Karanlık tema arka plan rengi */
+}
+	
+	body.dark-theme .controls {
+    background-color: #262525;
+}
+	body.dark-theme .controls button {
+    background-color: #2d2c2c;
+    color: #8a8a8a;
+    border: none;
+}
+	body.dark-theme p, body.dark-theme h2 {
+    color: #8a8a8a;
+}
+	body.dark-theme .player, body.dark-theme #loopDuration {
+    border: 1px solid #8a8a8a;
+}
+	body.dark-theme .button, body.dark-theme label {
+    color: #8a8a8a;
+}
+	body.dark-theme select#loopSelect {
+    background: #333;
+    color: #8a8a8a;
+}
+
+	body.faruki-theme {
+    background-color: #0c4113;
+}
+	
+				body.faruki-theme .controls {
+    background-color: #0b3811;
+}
+			body.faruki-theme .controls button {
+    background-color: #15451c;
+    color: #8fb294;
+    border: none;
+}
+
+			body.faruki-theme p, body.faruki-theme h2 {
+			color: #8fb294;
+		}
+			body.faruki-theme .player, body.faruki-theme #loopDuration {
+			border: 1px solid #8fb294;
+		}
+			body.faruki-theme .button, body.faruki-theme label {
+			color: #8fb294;
+		}
+			body.faruki-theme select#loopSelect {
+    background: #0c4113;
+    color: #8fb294;
+    border-color: #8fb294;
+}
+#theme-toggle-btn:focus {
+  outline: none;
+}
+</style>
+</head>
+<body>
+<div class="controls">
+  <button onclick="changeFontSize('tr', 1)"><i class="fa-solid fa-plus"></i> Büyüt</button>
+  <button onclick="changeFontSize('tr', -1)"><i class="fa-solid fa-minus"></i> Küçült</button>
+  <button onclick="changeFontSize('ar', 1)"><i class="fa-solid fa-plus"></i> Arapça Büyüt</button>
+  <button onclick="changeFontSize('ar', -1)"><i class="fa-solid fa-minus"></i> Arapça Küçült</button>
+  <button onclick="previousPage()"><i class="fa-regular fa-circle-left"></i> Önceki Hadis</button>
+  <button onclick="nextPage()"> Sonraki Hadis <i class="fa-regular fa-circle-right"></i></button>
+<button id="theme-toggle-btn" onclick="toggleTheme()">
+  <i class="fa-solid fa-palette"></i> <span>Aydınlık</span>
+</button>
+	
+	</div>
+<div id="hadis-container" class="hadis-container">
+  <p>Hadis-i Şerif Okumaya Başlarken;
+    قَالَ رَسُولُ ا ه لٰلِّ صَلَّي ا ه لٰلُّ عَلَيْهِ وَ سَلَّمَ
+    “Rasûlullah (s.a.v) Efendimiz şöyle buyurmuştur” denir. Okumayı Bitirince de;
+    صَدَقَ رَسُولُ ا ه لٰلِّ صَ لَّي ا ه لٰلُّ عَلَيْهِ وَ سَلَّمَ فِيمَا قَالَ اَوْ
+    كَمَا قَالَ
+    “Rasûlullah (s.a.v) Efendimiz doğru söyledi. Böyle ya da buna yakın söyledi” denir. </p>
+  <div class="hadis active" id="hadis-1">
+    <h2>1. Hadis-i Şerif</h2>
+    <p><span class="arabic">مَنْ لَا يَرْحَمُ لَا يُرْحَمُ</span><br>
+      <br>
+      Merhamet etmeyene merhamet edilmez. (Buhârî, Edeb, 27)</p>
+  </div>
+  <div class="hadis" id="hadis-2">
+    <h2>2. Hadis-i Şerif</h2>
+    <p><span class="arabic">مَنْ غَشَّنَا فَلَيْسَ مِنَّا</span><br>
+      <br>
+      Bizi aldatan, bizden değildir.(Müslim, Îmân, 45)</p>
+  </div>
+  <div class="hadis" id="hadis-3">
+    <h2>3. Hadis-i Şerif</h2>
+    <p><span class="arabic">الْحَيَاءُ لَا يَأْتِي إِلَّا بِخَيْرٍ </span><br>
+      <br>
+      Hayâ ancak hayır getirir. (Buhârî, Edeb, 77)</p>
+  </div>
+  <div class="hadis" id="hadis-4">
+    <h2>4. Hadis-i Şerif</h2>
+    <p><span class="arabic">مَنْ تَشَبَّهَ بِقَوْمٍ فَهُوَ مِنْهُمْ</span><br>
+      <br>
+      Her kim bir kavme benzerse o, onlardandır. (Ebû Dâvûd, Libâs, 5)</p>
+  </div>
+  <div class="hadis" id="hadis-5">
+    <h2>5. Hadis-i Şerif</h2>
+    <p><span class="arabic">الْمُجَاهِدُ مَنْ جَاهَدَ نَفْسَهُ</span><br>
+      <br>
+      (Hakiki) mücahit, nefsiyle cihat edendir. (Tirmizî, Fedâilu’l-Cihâd, 2)</p>
+  </div>
+  <div class="hadis" id="hadis-6">
+    <h2>6. Hadis-i Şerif</h2>
+    <p><span class="arabic">خَيْرُ النَّاسِ أَنْفَعُهُمْ لِلنَّاسِ</span><br>
+      <br>
+      İnsanların en hayırlısı, insanlara en faydalı olanıdır. (Şihâb el-Kudâî, Müsned, Bâb:771, c.2, s.223, h.no:1234)</p>
+  </div>
+  <div class="hadis" id="hadis-7">
+    <h2>7. Hadis-i Şerif</h2>
+    <p><span class="arabic">الْمَرْءُ مَعَ مَنْ أَحَبَّ</span><br>
+      <br>
+      Kişi, sevdiği ile beraberdir. (Buhârî, Edeb, 96)</p>
+  </div>
+  <div class="hadis" id="hadis-8">
+    <h2>8. Hadis-i Şerif</h2>
+    <p><span class="arabic">الصَّبْرُ عِنْدَ الصَّدْمَةِ الْأُولَى</span><br>
+      <br>
+      (Hakiki) sabır, (musibetin) ilk darbesi sırasında (gösterilen sabırdır). (Buhârî, Cenâiz, 42)</p>
+  </div>
+  <div class="hadis" id="hadis-9">
+    <h2>9. Hadis-i Şerif</h2>
+    <p><span class="arabic">إِنَّ الدَّالَّ عَلَى الْخَيْرِ كَفَاعِلِهِ</span><br>
+      <br>
+      Muhakkak ki hayra delalet eden, onu yapan gibidir. (Tirmizî, İlm, 14)</p>
+  </div>
+  <div class="hadis" id="hadis-10">
+    <h2>10. Hadis-i Şerif</h2>
+    <p><span class="arabic">خَيْرُكُمْ مَنْ يُرْجَى خَيْرُهُ وَيُؤْمَنُ شَرُّهُ</span><br>
+      <br>
+      En hayırlınız, hayrı umulan ve şerrinden emin olunan kimsedir. (Tirmizî, Fiten, 76)</p>
+  </div>
+  <div class="hadis" id="hadis-11">
+    <h2>11. Hadis-i Şerif</h2>
+    <p><span class="arabic">أُدْعُوا اللهَ وَأَنْتُمْ مُوقِنُونَ بِالْإِجَابَةِ</span><br>
+      <br>
+      Allah'a, icabet edileceğine kesin bir şekilde inanarak dua edin. (Tirmizî, Deavât, 66)</p>
+  </div>
+  <div class="hadis" id="hadis-12">
+    <h2>12. Hadis-i Şerif</h2>
+    <p><span class="arabic">الْمُهَاجِرُ مَنْ هَجَرَ مَا نَهَى اللَّهُ عَنْهُ</span><br>
+      <br>
+      (Hakiki) muhacir, Allah'ın yasakladığı şeyi terk edendir. (Buhârî, Îmân, 4)</p>
+  </div>
+  <div class="hadis" id="hadis-13">
+    <h2>13. Hadis-i Şerif</h2>
+    <p><span class="arabic">التَّائِبُ مِنَ الذَّنْبِ كَمَنْ لَا ذَنْبَ لَهُ</span><br>
+      <br>
+      Günahtan tevbe eden, hiç günahı olmayan kimse gibidir. (İbn-i Mâce, Zühd, 30)</p>
+  </div>
+  <div class="hadis" id="hadis-14">
+    <h2>14. Hadis-i Şerif</h2>
+    <p><span class="arabic">الْأَعْمَالُ بِالنِّيَّةِ وَلِكُلِّ امْرِئٍ مَا نَوَى</span><br>
+      <br>
+      Ameller, niyete göredir. Her bir kimseye niyet ettiği şey vardır. (Buhârî, Îmân, 42)</p>
+  </div>
+  <div class="hadis" id="hadis-15">
+    <h2>15. Hadis-i Şerif</h2>
+    <p><span class="arabic">الْيَدُ الْعُلْيَا خَيْرٌ مِنَ الْيَدِ السُّفْلَى</span><br>
+      <br>
+      Veren el, alan elden daha hayırlıdır. (Buhârî, Zekât, 18)</p>
+  </div>
+  <div class="hadis" id="hadis-16">
+    <h2>16. Hadis-i Şerif</h2>
+    <p><span class="arabic">إِنَّ أَبْعَدَ النَّاسِ مِنَ اللَّهِ الْقَلْبُ الْقَاسِي</span><br>
+      <br>
+      Muhakkak ki, insanların Allah’tan en uzak olanı, katı kalp (li kimse)-dir. (Tirmizî, Zühd, 61)</p>
+  </div>
+  <div class="hadis" id="hadis-17">
+    <h2>17. Hadis-i Şerif</h2>
+    <p><span class="arabic">لَيْسَ الْمُؤْمِنُ الَّذِي يَشْبَعُ وَجَارُهُ جَائِعٌ</span><br>
+      <br>
+      Komşusu aç olduğu halde doyan (tok olan) kimse (kamil) mü’min değildir. (Buhârî, el-Edebu’l-Mufred, 61, c.1, s.60, h.no:112)</p>
+  </div>
+  <div class="hadis" id="hadis-18">
+    <h2>18. Hadis-i Şerif</h2>
+    <p><span class="arabic">أَكْثِرُوا ذِكْرَ هَاذِمِ اللَّذَّاتِ</span><br>
+      <br>
+      Lezzetleri yok edeni (yani ölümü) çokça hatırlayınız. (Nesâî, Cenâiz, 3)</p>
+  </div>
+  <div class="hadis" id="hadis-19">
+    <h2>19. Hadis-i Şerif</h2>
+    <p><span class="arabic">لَا يَشْكُرُ اللَّهَ مَنْ لَا يَشْكُرُ النَّاسَ</span><br>
+      <br>
+      İnsanlara teşekkür etmeyen, Allah’a da şükretmez. (Şükretmemiş olur) (Ebû Dâvûd, Edeb, 12)</p>
+  </div>
+  <div class="hadis" id="hadis-20">
+    <h2>20. Hadis-i Şerif</h2>
+    <p><span class="arabic">الْجَمَاعَةُ رَحْمَةٌ وَالْفُرْقَةُ عَذَابٌ</span><br>
+      <br>
+      Cemaat rahmettir, ayrılık ise azaptır. (Ahmed b. Hanbel, Müsned, c.30, s.390, h.no:18449)</p>
+  </div>
+  <div class="hadis" id="hadis-21">
+    <h2>21. Hadis-i Şerif</h2>
+    <p><span class="arabic">يَسِّرُوا وَلَا تُعَسِّرُوا وَبَشِّرُوا وَلَا تُنَفِّرُوا</span><br>
+      <br>
+      Kolaylaştırın, zorlaştırmayın. Müjdeleyin, nefret ettirmeyin. (Buhârî, İlm, 11)</p>
+  </div>
+  <div class="hadis" id="hadis-22">
+    <h2>22. Hadis-i Şerif</h2>
+    <p><span class="arabic">حُرِّمَتِ النَّارُ عَلَى عَيْنٍ دَمَعَتْ مِنْ خَشْيَةِ اللّهِ</span><br>
+      <br>
+      (Cehennem) ateşi, Allah korkusundan yaş döken göze haram kılındı. (Dârimî, Cihâd, 11)</p>
+  </div>
+  <div class="hadis" id="hadis-23">
+    <h2>23. Hadis-i Şerif</h2>
+    <p><span class="arabic">الْمُسْلِمُ مَنْ سَلِمَ الْمُسْلِمُونَ مِنْ لِسَانِهِ وَيَدِهِ</span><br>
+      <br>
+      (Kâmil) Müslüman, dilinden ve elinden Müslümanların selamette olduğu kimsedir. (Buhârî, Îmân, 4)</p>
+  </div>
+  <div class="hadis" id="hadis-24">
+    <h2>24. Hadis-i Şerif</h2>
+    <p><span class="arabic">إِنَّ اللَّهَ يُحِبُّ إِذَا عَمِلَ أَحَدُكُمْ عَمَلًا أَنْ يُتْقِنَهُ</span><br>
+      <br>
+      Muhakkak ki Allah, biriniz bir iş yaptığında, onu (tam ve) sağlam yapmasını sever. (Ebû Ya‘lâ, Müsned, c.4, s.20, h.no:4369)</p>
+  </div>
+  <div class="hadis" id="hadis-25">
+    <h2>25. Hadis-i Şerif</h2>
+    <p><span class="arabic">اَلْحَسَدُ يَأْكُلُ الْحَسَنَاتِ كَمَا تَأْكُلُ النَّارُ الْحَطَبَ</span><br>
+      <br>
+      Haset, ateşin odunu yediği gibi sevapları yer (tüketir). (İbn-i Mâce, Zühd, 22; Ebû Dâvûd, Edeb, 52)</p>
+  </div>
+  <div class="hadis" id="hadis-26">
+    <h2>26. Hadis-i Şerif</h2>
+    <p><span class="arabic">مَا مِنْ شَيْءٍ أَثْقَلُ فِي الْمِيزَانِ مِنْ حُسْنِ الْخُلُقِ</span><br>
+      <br>
+      Mizanda, ahlâk güzelliğinden daha ağır hiç bir şey yoktur. (Ebû Dâvûd, Edeb, 8)</p>
+  </div>
+  <div class="hadis" id="hadis-27">
+    <h2>27. Hadis-i Şerif</h2>
+    <p><span class="arabic">لَا يَدْخُلُ الْجَنَّةَ مَنْ كَانَ فِي قَلْبِهِ مِثْقَالُ ذَرَّةٍ مِنْ كِبْرٍ</span><br>
+      <br>
+      Kalbinde, kibirden zerre ağırlığınca bulunan kimse cennete giremez. (Müslim, Îmân, 39)</p>
+  </div>
+  <div class="hadis" id="hadis-28">
+    <h2>28. Hadis-i Şerif</h2>
+    <p><span class="arabic">دَعْ مَا يَرِيبُكَ إِلَى مَا لَا يَرِيبُكَ</span><br>
+      <br>
+      Seni şüpheye düşüreni terk et, seni şüpheye düşürmeyene (yönel). (Nesâî, Eşribe, 50)</p>
+  </div>
+  <div class="hadis" id="hadis-29">
+    <h2>29. Hadis-i Şerif</h2>
+    <p><span class="arabic">حُبُّ الدُّنْيَا رَأْسُ كُلِّ خَطِيئَةٍ</span><br>
+      <br>
+      Dünya sevgisi, her hatanın başıdır. (Beyhakî, Şuabu’l-Îmân, Bab:71,h.no:10019, c.13, s.102)</p>
+  </div>
+  <div class="hadis" id="hadis-30">
+    <h2>30. Hadis-i Şerif</h2>
+    <p><span class="arabic">مَنْ يُرِدِ اللّهُ بِهِ خَيْرًا يُفَقِّهْهُ فِي الدِّينِ</span><br>
+      <br>
+      Allah her kim hakkında hayır dilerse, onu din hususunda fakih (derin anlayış sahibi) kılar. (Buhârî, İlm, 13)</p>
+  </div>
+  <div class="hadis" id="hadis-31">
+    <h2>31. Hadis-i Şerif</h2>
+    <p><span class="arabic">أَكْمَلُ الْمُؤْمِنِينَ إِيمَانًا أَحْسَنُهُمْ خُلُقًا</span><br>
+      <br>
+      İman bakımından mü’minlerin en kâmil olanı, onların ahlâk bakımından en güzel olanıdır. (Ebû Dâvûd, Sünnet, 16)</p>
+  </div>
+  <div class="hadis" id="hadis-32">
+    <h2>32. Hadis-i Şerif</h2>
+    <p><span class="arabic">إِنَّ الرَّجُلَ لَيُحْرَمُ الرِّزْقَ بِالذَّنْبِ يُصِيبُهُ</span><br>
+      <br>
+      Şüphesiz kişi, işlediği günah yüzünden mutlaka rızıktan mahrum bırakılır. (İbn-i Mâce, Fiten, 22)</p>
+  </div>
+  <div class="hadis" id="hadis-33">
+    <h2>33. Hadis-i Şerif</h2>
+    <p><span class="arabic">إِنَّ أَحَبَّ الْأَعْمَالِ إِلَى اللّهِ مَا دَامَ وَإِنْ قَلَّ</span><br>
+      <br>
+      Muhakkak ki amellerin Allah’a en sevgili olanı, az olsa da devamlı olanıdır. (Buhârî, Libâs, 43)</p>
+  </div>
+  <div class="hadis" id="hadis-34">
+    <h2>34. Hadis-i Şerif</h2>
+    <p><span class="arabic">مِنْ حُسْنِ إِسْلَامِ الْمَرْءِ تَرْكُهُ مَا لَا يَعْنِيهِ</span><br>
+      <br>
+      (Din ve dünyası için yararı olmayan ve) kendisini ilgilendirmeyen şeyleri terk etmesi, kişinin Müslümanlığının güzelliğindendir. (Muvattâ, Hüsnü’l-Huluk, 1)</p>
+  </div>
+  <div class="hadis" id="hadis-35">
+    <h2>35. Hadis-i Şerif</h2>
+    <p><span class="arabic">خَيْرُكُمْ خَيْرُكُمْ لِأَهْلِهِ وَأَنَا خَيْرُكُمْ لِأَهْلِي</span><br>
+      <br>
+      En hayırlınız, ailesine karşı en hayırlı olanınızdır. Ben ise aileme karşı en hayırlınızım. (Tirmizî, Menâkıb, 64)</p>
+  </div>
+  <div class="hadis" id="hadis-36">
+    <h2>36. Hadis-i Şerif</h2>
+    <p><span class="arabic">إِنَّ الشَّيْطَانَ يَجْرِي مِنَ الْإِنْسَانِ مَجْرَى الدَّمِ</span><br>
+      <br>
+      Muhakkak ki şeytan, insanın bedeninde kanın aktığı yerde (veya kanın akışı gibi) akar. (Buhârî, Ahkâm, 21)</p>
+  </div>
+  <div class="hadis" id="hadis-37">
+    <h2>37. Hadis-i Şerif</h2>
+    <p><span class="arabic">حُجِبَتِ النَّارُ بِالشَّهَوَاتِ وَحُجِبَتِ الْجَنَّةُ بِالْمَكَارِهِ</span><br>
+      <br>
+      Cehennem (nefsin hoşuna giden) şehvetler ile kuşatıldı. Cennet ise, (nefsin hoşuna gitmeyen) zorluklarla kuşatıldı. (Buhârî, Rikâk, 28)</p>
+  </div>
+  <div class="hadis" id="hadis-38">
+    <h2>38. Hadis-i Şerif</h2>
+    <p><span class="arabic">لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ</span><br>
+      <br>
+      Kendi (nefsi) için (sevip) arzu ettiğini (mü’min) kardeşi için de (sevip) arzu etmedikçe hiç biriniz (kâmil manada) iman etmiş olmaz. (Buhârî, Îmân, 7)</p>
+  </div>
+  <div class="hadis" id="hadis-39">
+    <h2>39. Hadis-i Şerif</h2>
+    <p><span class="arabic">مَنْ تَمَسَّكَ بِسُنَّتِي عِنْدَ فَسَادِ أُمَّتِي فَلَهُ أَجْرُ مِائَةِ شَهِيدٍ</span><br>
+      <br>
+      Her kim, ümmetimin fesada uğradığı zaman sünnetime tutunursa, onun için yüz şehit sevabı vardır. (Beyhakî, ez-Zühdü’l-Kebîr, s.118)</p>
+  </div>
+  <div class="hadis" id="hadis-40">
+    <h2>40. Hadis-i Şerif</h2>
+    <p><span class="arabic">اِتَّقِ اللَّهَ حَيْثُمَا كُنْتَ وَأَتْبِعِ السَّيِّئَةَ الْحَسَنَةَ تَمْحُهَا وَخَالِقِ النَّاسَ بِخُلُقٍ حَسَنٍ</span><br>
+      <br>
+      Her nerede olursan ol Allah’tan kork, kötülüğün arkasından iyilik yap (ki bu) onu siler. İnsanlara güzel ahlakla muamele et. (Tirmizî, Birr, 55)</p>
+  </div>
+  <div class="oynatici">
+    <div class="player">
+      <button class="button" id="playButton1"> <i class="fas fa-volume-up"></i> Arapça Ezberle </button>
+      <button class="button" id="slowButton1" style="display:none;"> <i class="fa-solid fa-angles-down"></i> Yavaş Oku </button>
+      <button class="button" id="normalButton1" style="display:none;"> <i class="fa-solid fa-play"></i> Normal Oku </button>
+      <audio id="audio1" src="hadis-sesleri/hadis1.mp3"></audio>
+    </div>
+    <div class="player">
+      <button class="button" id="playButton2"> <i class="fas fa-volume-up"></i> Türkçe Ezberle </button>
+      <button class="button" id="slowButton2" style="display:none;"> <i class="fa-solid fa-angles-down"></i> Yavaş Oku </button>
+      <button class="button" id="normalButton2" style="display:none;"> <i class="fa-solid fa-play"></i> Normal Oku </button>
+      <audio id="audio2" src="hadis-sesleri/hadis1t.mp3"></audio>
+    </div>
+    <div id="loopDuration">
+      <label for="loopSelect">Tekrarlama Aralığı: </label>
+      <select id="loopSelect">
+        <option value="0">Aralıksız</option>
+        <option value="1">1 saniye</option>
+        <option value="5">5 saniye</option>
+        <option value="10">10 saniye</option>
+        <option value="20">20 saniye</option>
+        <option value="30">30 saniye</option>
+        <option value="60">1 dakika</option>
+        <option value="600">10 dakika</option>
+        <option value="6000">1 Saat</option>
+      </select>
+    </div>
+  </div>
+</div>
+<script>
+	let currentPage = 1;
+	const totalHadis = 40; // Toplam hadis sayısını buraya girin
+
+	function changeFontSize(type, change) {
+		let elements;
+		if (type === 'tr') {
+			elements = document.querySelectorAll('.hadis p:not(.arabic)');
+		} else if (type === 'ar') {
+			elements = document.querySelectorAll('.hadis .arabic');
+		}
+		elements.forEach(el => {
+			let style = window.getComputedStyle(el, null).getPropertyValue('font-size');
+			let currentSize = parseFloat(style);
+			el.style.fontSize = (currentSize + change) + 'px';
+		});
+	}
+
+	function showPage(page) {
+		document.querySelectorAll('.hadis').forEach((el, index) => {
+			if (index + 1 === page) {
+				el.classList.add('active');
+			} else {
+				el.classList.remove('active');
+			}
+		});
+		updateAudioSources(page);
+	}
+
+	function previousPage() {
+		if (currentPage > 1) {
+			currentPage--;
+		} else {
+			currentPage = totalHadis;
+		}
+		showPage(currentPage);
+	}
+
+	function nextPage() {
+		if (currentPage < totalHadis) {
+			currentPage++;
+		} else {
+			currentPage = 1;
+		}
+		showPage(currentPage);
+	}
+
+	function updateAudioSources(page) {
+		document.getElementById('audio1').src = `https://www.gultanemorganizasyon.com.tr/hadis-sesleri/hadis${page}.mp3`;
+		document.getElementById('audio2').src = `https://www.gultanemorganizasyon.com.tr/hadis-sesleri/hadis${page}t.mp3`;
+		document.getElementById('playButton1').innerHTML = '<i class="fas fa-volume-up"></i> Arapça Ezberle';
+		document.getElementById('playButton2').innerHTML = '<i class="fas fa-volume-up"></i> Türkçe Ezberle';
+		document.getElementById('slowButton1').style.display = 'none';
+		document.getElementById('normalButton1').style.display = 'none';
+		document.getElementById('slowButton2').style.display = 'none';
+		document.getElementById('normalButton2').style.display = 'none';
+	}
+
+	document.addEventListener('DOMContentLoaded', () => {
+		showPage(currentPage);
+	});
+
+	let currentAudio = null;
+
+	function playAudio(audioId) {
+		let audioElement = document.getElementById(audioId);
+		let playingSpan = document.getElementById(`playing${audioId.slice(-1)}`);
+
+		if (currentAudio && currentAudio !== audioElement) {
+			currentAudio.pause();
+			playingSpan.innerHTML = '';
+		}
+
+		if (audioElement.paused) {
+			audioElement.play();
+			currentAudio = audioElement;
+			playingSpan.innerHTML = 'Playing';
+		} else {
+			audioElement.pause();
+			currentAudio = null;
+			playingSpan.innerHTML = '';
+		}
+	}
+
+	document.addEventListener('DOMContentLoaded', function() {
+		const audio1 = document.getElementById('audio1');
+		const playButton1 = document.getElementById('playButton1');
+		const slowButton1 = document.getElementById('slowButton1');
+		const normalButton1 = document.getElementById('normalButton1');
+
+		const audio2 = document.getElementById('audio2');
+		const playButton2 = document.getElementById('playButton2');
+		const slowButton2 = document.getElementById('slowButton2');
+		const normalButton2 = document.getElementById('normalButton2');
+
+		const loopDuration = document.getElementById('loopDuration');
+		const loopSelect = document.getElementById('loopSelect');
+
+		let currentAudio = null;
+		let loopTimer = null;
+
+		playButton1.addEventListener('click', function() {
+			loopDuration.style.display = 'block';
+			if (audio1.paused) {
+				audio2.pause();
+				resetPlaybackRate(audio2);
+				audio1.play();
+				playButton1.innerHTML = '<i class="fa-regular fa-circle-stop"></i> Durdur';
+				slowButton1.style.display = 'inline-block';
+				currentAudio = audio1;
+				setLoop(audio1, parseInt(loopSelect.value));
+			} else {
+				audio1.pause();
+				resetPlaybackRate(audio1);
+				playButton1.innerHTML = '<i class="fas fa-volume-up"></i> Arapça Ezberle';
+				slowButton1.style.display = 'none';
+				normalButton1.style.display = 'none';
+				loopDuration.style.display = 'none';
+				clearTimeout(loopTimer);
+				currentAudio = null;
+			}
+		});
+
+		playButton2.addEventListener('click', function() {
+			loopDuration.style.display = 'block';
+			if (audio2.paused) {
+				audio1.pause();
+				resetPlaybackRate(audio1);
+				audio2.play();
+				playButton2.innerHTML = '<i class="fa-regular fa-circle-stop"></i> Durdur';
+				slowButton2.style.display = 'inline-block';
+				currentAudio = audio2;
+				setLoop(audio2, parseInt(loopSelect.value));
+			} else {
+				audio2.pause();
+				resetPlaybackRate(audio2);
+				playButton2.innerHTML = '<i class="fas fa-volume-up"></i> Türkçe Ezberle';
+				slowButton2.style.display = 'none';
+				normalButton2.style.display = 'none';
+				loopDuration.style.display = 'none';
+				clearTimeout(loopTimer);
+				currentAudio = null;
+			}
+		});
+		
+
+		loopSelect.addEventListener('change', function() {
+			var loopDurationValue = parseInt(loopSelect.value);
+			if (currentAudio) {
+				currentAudio.currentTime = 0; // Sesi başa sar
+				currentAudio.play(); // Sesi tekrar başlat
+				setLoop(currentAudio, loopDurationValue);
+			}
+		});
+
+		function setLoop(audio, duration) {
+			clearTimeout(loopTimer);
+			audio.onended = function() {
+				loopTimer = setTimeout(function() {
+					audio.currentTime = 0;
+					audio.play();
+				}, duration * 1000);
+			};
+		}
+		
+		  const themeToggleBtn = document.getElementById('theme-toggle-btn');
+themeToggleBtn.addEventListener('click', toggleTheme);
+
+let themeCounter = 0; // Tema sayacı
+
+function toggleTheme() {
+  const body = document.body;
+  const themeIcon = themeToggleBtn.querySelector('i');
+  const themeText = themeToggleBtn.querySelector('span'); 
+
+  // Tema sayacını artır
+  themeCounter++;
+
+  // Tema sayacına göre tema seçimini belirle
+  if (themeCounter === 1) {
+    body.classList.toggle('dark-theme');
+    if (body.classList.contains('dark-theme')) {
+      themeText.textContent = 'Karanlık'; 
+    } else {
+      themeText.textContent = 'Aydınlık'; 
+    }
+  } else if (themeCounter === 2) {
+    body.classList.remove('dark-theme');
+	body.classList.add('faruki-theme');
+    themeText.textContent = 'Faruki';
+  } else if (themeCounter === 3) {
+    body.classList.remove('faruki-theme');
+    themeText.textContent = 'Aydınlık';
+    themeCounter = 0; // Tema sayacını sıfırla
+  }
+}
+
+		slowButton1.addEventListener('click', function() {
+			audio1.playbackRate -= 0.1;
+			normalButton1.style.display = 'inline-block';
+			slowButton1.innerHTML = '<i class="fa-solid fa-angles-down"></i> Daha Yavaş Oku';
+		});
+
+		normalButton1.addEventListener('click', function() {
+			audio1.playbackRate = 1.0;
+			normalButton1.style.display = 'none';
+		});
+
+		slowButton2.addEventListener('click', function() {
+			audio2.playbackRate -= 0.1;
+			normalButton2.style.display = 'inline-block';
+			slowButton2.innerHTML = '<i class="fa-solid fa-angles-down"></i> Daha Yavaş Oku';
+		});
+
+		normalButton2.addEventListener('click', function() {
+			audio2.playbackRate = 1.0;
+			normalButton2.style.display = 'none';
+		});
+
+		function resetPlaybackRate(audio) {
+			audio.playbackRate = 1.0;
+		}
+		
+		 
+	});
+</script>
+</body>
+</html>
